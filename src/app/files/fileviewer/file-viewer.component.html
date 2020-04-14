@@ -1,0 +1,14 @@
+<p>ID: {{model.id}}</p>
+<p>Name: {{model.originalName}}</p>
+<p>Size: {{model.fileSize}}</p>
+<p>Path: {{model.relativePath}}</p>
+
+<p>Files</p>
+
+<div *ngIf="isFolder">
+    <div *ngFor="let fse of model.containedFiles">
+        <span> <span (click)="signalModelChange(fse.relativePath, fse.isFolder)">{{fse.getOriginalName}}</span> | {{fse.relativePath}} | {{fse.fileSize}} bytes</span>
+    </div>
+</div>
+
+

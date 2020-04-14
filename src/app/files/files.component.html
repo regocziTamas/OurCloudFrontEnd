@@ -1,1 +1,12 @@
 <p>Files works!</p>
+<p>{{msgFromBackend}}</p>
+
+<div class="form-group">
+    <label for="file">Choose File</label>
+    <input type="file"
+           id="file"
+           (change)="selectFileToUpload($event.target.files)">
+</div>
+<button (click)="uploadFile()">Upload</button>
+<p><span *ngFor="let b of breadcrumb.crumbs" (click)="onNavigateBreadcrumb(b.path)">{{b.name}}/</span></p>
+<app-file-viewer [model]=modelToShow (modelChange)="onModelChange($event)"></app-file-viewer>

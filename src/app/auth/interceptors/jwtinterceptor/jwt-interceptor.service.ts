@@ -9,15 +9,15 @@ export class JwtInterceptor implements HttpInterceptor{
   constructor(private authenticationService: AuthService) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // add authorization header with jwt token if available
-    if (this.authenticationService.isLoggedIn) {
-        request = request.clone({
-            setHeaders: {
-                Authorization: `Bearer ${this.authenticationService.token}`
-            }
-        });
-    }
+        // add authorization header with jwt token if available
+        if (this.authenticationService.isLoggedIn) {
+            request = request.clone({
+                setHeaders: {
+                    Authorization: `${this.authenticationService.token}`
+                }
+            });
+        }
 
-    return next.handle(request);
-}
+        return next.handle(request);
+    }
 }

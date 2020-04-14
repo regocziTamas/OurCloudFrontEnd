@@ -10,13 +10,15 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { JwtInterceptor } from './auth/interceptors/jwtinterceptor/jwt-interceptor.service';
 import { HttpErrorInterceptor } from './auth/interceptors/httperrorinterceptor/http-error-interceptor.service';
+import { FileViewerComponent } from './files/fileviewer/file-viewer.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     FilesComponent,
     PageNotFoundComponent,
-    LoginComponent
+    LoginComponent,
+    FileViewerComponent,
   ],
   imports: [
     BrowserModule,
