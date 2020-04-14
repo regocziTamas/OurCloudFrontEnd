@@ -11,6 +11,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { JwtInterceptor } from './auth/interceptors/jwtinterceptor/jwt-interceptor.service';
 import { HttpErrorInterceptor } from './auth/interceptors/httperrorinterceptor/http-error-interceptor.service';
 import { FileViewerComponent } from './files/fileviewer/file-viewer.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { FileViewerComponent } from './files/fileviewer/file-viewer.component';
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    BrowserAnimationsModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
