@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { map, catchError } from 'rxjs/operators';
-import { error } from 'util';
 import { empty } from 'rxjs';
 import { FileService } from '../services/file/file-service.service';
 import { FileSystemElement } from '../models/filesystemelement';
