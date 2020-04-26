@@ -10,7 +10,7 @@ import { environment } from 'src/environments/environment';
 })
 export class AuthService {
 
-  public isLoggedIn: boolean = true;
+  public isLoggedIn: boolean = false;
   public username = "Thomaster"
   public token: String
 

@@ -1,0 +1,12 @@
+<div class="folder-upload-container">
+  <form>
+    <mat-form-field class="example-full-width">
+      <mat-label>New Folder Name</mat-label>
+      <input matInput placeholder="New Folder" value="" [formControl]="newFolderNameForm">
+    </mat-form-field>
+  </form>
+  <button mat-raised-button color="accent" (click)="onCreateFolder()">
+    <mat-icon style="padding-bottom: 5px;" class="upload-icon">create_new_folder</mat-icon> Create Folder
+  </button>
+</div>
+

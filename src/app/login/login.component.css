@@ -1,0 +1,27 @@
+.formGroup {
+    display: block;
+}
+
+.main-card {
+    margin-top: 10%;
+    margin-left: 10%;
+    margin-right: 10%;
+    padding-top: 5%;
+    padding-bottom: 5%;
+    padding-left: 5%;
+    padding-right: 5%;
+    background-color: rgb(247, 247, 247);
+}
+
+.login-header {
+    font-size: 42px;
+    display: inline;
+}
+
+.loginForm {
+    margin-top: 1%;
+}
+
+.loginButton {
+    margin-top: 1%;
+}

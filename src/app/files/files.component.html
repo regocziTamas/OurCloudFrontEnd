@@ -1,12 +1,22 @@
-<p>Files works!</p>
-<p>{{msgFromBackend}}</p>
+<mat-card class="upload-card" style="display: flex;">
+        <mat-tab-group mat-align-tabs="center" style="min-height: 100%; min-width: 100%;">
+            <mat-tab label="Upload File" class="uploadtab" >
+                <app-file-uploader [parentFolder]=modelToShow (uploadFileEvent) = "onFileUpload($event)"></app-file-uploader>
+            </mat-tab>
+            <mat-tab label="Upload Folder" class="uploadtab" id="kabbe">
+                <app-folder-uploader (uploadFolderEvent) = "onFolderUpload($event)" ></app-folder-uploader>
+            </mat-tab>
+        </mat-tab-group>
+</mat-card>
 
-<div class="form-group">
-    <label for="file">Choose File</label>
-    <input type="file"
-           id="file"
-           (change)="selectFileToUpload($event.target.files)">
-</div>
-<button (click)="uploadFile()">Upload</button>
-<p><span *ngFor="let b of breadcrumb.crumbs" (click)="onNavigateBreadcrumb(b.path)">{{b.name}}/</span></p>
-<app-file-viewer [model]=modelToShow (modelChange)="onModelChange($event)"></app-file-viewer>
+
+<p>
+    <span *ngFor="let b of breadcrumb.crumbs; let i = index" [attr.data-index]="i" (click)="onNavigateBreadcrumb(b.path)" class="bcspan">
+        <span *ngIf="i == 0">/</span><span class="bcelement">{{b.name}}</span><span *ngIf="i != breadcrumb.crumbs.length - 1">/</span>
+    </span>
+</p>
+<app-file-viewer
+    [model]=modelToShow
+    (modelChange)="onModelChange($event)"
+    (downloadFileEvent)="onDownloadFileEvent($event)"
+    (deleteFileEvent)="onDeleteFileEvent($event)"></app-file-viewer>

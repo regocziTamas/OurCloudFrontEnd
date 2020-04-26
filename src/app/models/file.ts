@@ -1,9 +1,12 @@
 import { FileSystemElement } from './filesystemelement';
 
-export class File extends FileSystemElement {
+export class OCFile extends FileSystemElement {
+
+    mimeType : string;
 
     constructor(sourceJSON: JSON) {
         super(sourceJSON)
+        this.mimeType = sourceJSON['mimeType']
     }
 
 }

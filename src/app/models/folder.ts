@@ -1,5 +1,4 @@
 import { FileSystemElement } from './filesystemelement';
-import { File } from './file';
 import { ContainedFse } from './contained-fse';
 
 export class Folder extends FileSystemElement{
@@ -16,12 +15,12 @@ export class Folder extends FileSystemElement{
 
     public static parseContainedFiles(sourceJSONs : JSON[]) : ContainedFse[] {
         let result: ContainedFse[] = new Array()
-
+        
         for(let fse of sourceJSONs) {
             result.push(new ContainedFse(fse));
         }
 
-        return result
+        return result.sort(ContainedFse.compareTwo);
     }
 
 }

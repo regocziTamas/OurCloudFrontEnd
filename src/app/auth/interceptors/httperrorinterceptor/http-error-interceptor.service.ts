@@ -17,8 +17,8 @@ export class HttpErrorInterceptor {
             location.reload(true);
         }
 
-        const error = err.error.message || err.statusText;
-        return throwError(error);
+        console.log(err)
+        return throwError(err);
     }))
 }
 }

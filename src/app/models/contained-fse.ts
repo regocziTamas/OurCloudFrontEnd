@@ -1,12 +1,13 @@
 export class ContainedFse {
 
-    private id: number
-    private relativePath: String
-    private originalName: String
-    private ownerId: number
-    private parentFolderPath: String
-    private fileSize: number
-    private isFolder: boolean
+    public id: number
+    public relativePath: string
+    public originalName: string
+    public ownerId: number
+    public parentFolderPath: string
+    public fileSize: number
+    public isFolder: boolean
+    public mimeType: string
 
     constructor(sourceJSON: JSON) {
         this.id = sourceJSON["id"]
@@ -16,33 +17,20 @@ export class ContainedFse {
         this.parentFolderPath = sourceJSON["parentFolderPath"]
         this.fileSize = sourceJSON["size"]
         this.isFolder = sourceJSON["folder"]
+        this.mimeType = sourceJSON["mimeType"]
     }
 
-    get getId() {
-        return this.id;
-    }
+    static compareTwo(fse1 : ContainedFse, fse2: ContainedFse) : number {
+        if(fse1.isFolder && !fse2.isFolder){
+            return -1
+        }
 
-    get getRelativePath() {
-        return this.relativePath;
-    }
+        else if(!fse1.isFolder && fse2.isFolder) {
+            return 1
+        }
 
-    get getOriginalName() {
-        return this.originalName;
-    }
-
-    get getOwnerId() {
-        return this.ownerId;
-    }
-
-    get getParentFolderPath() {
-        return this.parentFolderPath;
-    }
-
-    get getFileSize() {
-        return this.fileSize;
-    }
-
-    get getIsFolder() {
-        return this.isFolder;
+        else {
+            return fse1.originalName.localeCompare(fse2.originalName)
+        }
     }
 }

@@ -1,5 +1,10 @@
-<nav>
-  <a routerLink="/files" routerLinkActive="active">Files</a>
-</nav>
-
-<router-outlet></router-outlet>
+<div class="main">
+  <mat-toolbar *ngIf="authenticationService.isLoggedIn" class="navbar">
+    <span id="app-name">OurCloud</span>
+    <a routerLink="/files" routerLinkActive="active" class="navitem">Files</a>
+  </mat-toolbar>
+  
+  <div class="content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

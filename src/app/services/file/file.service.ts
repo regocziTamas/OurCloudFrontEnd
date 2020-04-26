@@ -2,11 +2,13 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { FileSystemElement } from 'src/app/models/filesystemelement';
 import { Folder } from 'src/app/models/folder';
-import { File } from 'src/app/models/file';
-import { HttpClient } from '@angular/common/http';
+import { OCFile } from 'src/app/models/file';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { map, filter, switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { ContainedFse } from 'src/app/models/contained-fse';
 
 @Injectable({
   providedIn: 'root'
@@ -20,17 +22,70 @@ export class FileService {
   }
 
   public getFileSystemElement(path: string) : Observable<FileSystemElement>{
-    let result: JSON = JSON.parse(this.map.get(path))
+    let params : HttpParams = new HttpParams()
+      .append("fileToPathToGet", path);
 
-    //return this.http.get<FileSystemElement>(environment.serverUrl)
+    return this.http.get<JSON>(environment.serverUrl + "/file", {params})
+    .pipe(map(result => {
+      if(result.hasOwnProperty("containedFiles")) {
+        return new Folder(result) 
+      } else {
+        return new OCFile(result)
+      }
+    }));
+  }
 
-    if(result.hasOwnProperty("containedFiles")) {
-      return of(new Folder(result)) 
-    }
-    else {
-      return of(new File(result))
-    }
+  public isFolderNameTakenInFolder(currentFolder : Folder, newFolderName : string) : boolean {
+     let result : ContainedFse[] = currentFolder.containedFiles
+        .filter(fse => fse.isFolder)
+        .filter(folder => folder.originalName === newFolderName);
 
+      return result.length === 0;
+  }
+
+  public isFileNameTakenInFolder(currentFolder : Folder, newFileName : string) : boolean {
+    let result : ContainedFse[] = currentFolder.containedFiles
+       .filter(fse => !fse.isFolder)
+       .filter(file => file.originalName === newFileName);
+       
+     return result.length === 0;
+  }
+
+  public sendDeleteRequest(fileToDelete : ContainedFse) {
+    let params : HttpParams = new HttpParams()
+    .append("fileToPathToDelete", fileToDelete.relativePath);
+
+    return this.http.delete<JSON>(environment.serverUrl + "/delete/fse", {params});
+  }
+
+  public sendDownloadRequest(fileToDownload : ContainedFse) {
+    let paramslol : HttpParams = new HttpParams()
+      .append("pathToFileToDownload", fileToDownload.relativePath);
+    let headerslol : HttpHeaders = new HttpHeaders()
+    .set("Accept", fileToDownload.mimeType);
+   
+    console.log(fileToDownload.mimeType);
+
+    return this.http.get(environment.serverUrl + "/download", {headers: headerslol, responseType: 'blob', params: paramslol})
+  }
+
+  public sendUploadRequest(fileToUpload : File, parentFolder : Folder) {
+    let formData:FormData = new FormData();  
+    formData.append("file", fileToUpload);
+    formData.append("parentFolderPath", parentFolder.relativePath)
+    formData.append("shouldOverrideExistingFile", "true")
+
+    return this.http.post(environment.serverUrl + "/upload/file", formData, {reportProgress: true, observe: 'events'});
+  }
+
+  public sendUploadFolderRequest(newFolderName : string, parentFolder : Folder) {
+
+    let formData : FormData = new FormData()
+    formData.append("parentFolderPath", parentFolder.relativePath)
+    formData.append("newFolderName", newFolderName)
+    formData.append("shouldOverrideExistingFile", "true");
+
+    return this.http.post(environment.serverUrl + "/upload/folder", formData);
   }
 
   private requestFromServer(path: String): JSON {

@@ -1,0 +1,21 @@
+.filename:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.curr-folder-details {
+    margin-bottom: 2%;
+}
+
+table {
+    width: 80%;
+    margin: auto;
+}
+
+.elementmenu {
+    cursor: pointer;
+}
+
+.elementmenuicon {
+    padding-bottom: 5px;
+}

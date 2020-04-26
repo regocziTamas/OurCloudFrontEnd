@@ -1,0 +1,17 @@
+.file-upload-container {
+    padding-top: 1%;
+    padding-left: 1%;
+}
+
+.upload-icon {
+    padding-bottom: 5px;
+    padding-right: 5px;
+}
+
+.upload-button {
+    margin-right: 1vw;
+}
+
+.progressBar {
+    margin-top: 2%;
+}
