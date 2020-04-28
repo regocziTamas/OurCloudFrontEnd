@@ -124,5 +124,8 @@
       }
     }
   },
-  "defaultProject": "OurCloudFrontEnd"
+  "defaultProject": "OurCloudFrontEnd",
+  "cli": {
+    "analytics": "ccee3271-8376-41b5-8109-236c4ae2e073"
+  }
 }
