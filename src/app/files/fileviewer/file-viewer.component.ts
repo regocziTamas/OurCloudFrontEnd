@@ -10,7 +10,7 @@ import { ContainedFse } from 'src/app/models/contained-fse';
 })
 export class FileViewerComponent implements OnInit {
 
-  @Input() model: FileSystemElement;
+  @Input() model: Folder;
   @Output() modelChange = new EventEmitter<string>();
   @Output() downloadFileEvent = new EventEmitter<ContainedFse>();
   @Output() deleteFileEvent = new EventEmitter<FileSystemElement>();
