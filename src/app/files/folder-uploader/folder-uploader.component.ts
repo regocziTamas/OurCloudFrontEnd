@@ -1,5 +1,7 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { FileService } from 'src/app/services/file/file.service';
+import { Folder } from 'src/app/models/folder';
 
 @Component({
   selector: 'app-folder-uploader',
@@ -8,18 +10,20 @@ import { FormControl } from '@angular/forms';
 })
 export class FolderUploaderComponent implements OnInit {
 
-  @Output() uploadFolderEvent = new EventEmitter<string>();
+  @Output() uploadFolderEvent = new EventEmitter<boolean>();
+  @Input() parentFolder : Folder
   newFolderName : string
   newFolderNameForm = new FormControl('');
-  constructor() { }
+  constructor(private fileService: FileService) { }
 
   ngOnInit(): void {
   }
 
   onCreateFolder() : void {
     if(this.newFolderNameForm.value) {
-      this.uploadFolderEvent.emit(this.newFolderNameForm.value)
-    }
-
+      this.fileService.sendUploadFolderRequest(this.newFolderNameForm.value, this.parentFolder).subscribe(res => {
+        this.uploadFolderEvent.emit(true)
+      })
+    } 
   }
 }

@@ -26,6 +26,7 @@ export class AuthService {
             console.log(res.headers.get('Authorization'))
             this.token = res.headers.get('Authorization')
             this.isLoggedIn = true
+            this.username = username;
         }));
   }
 

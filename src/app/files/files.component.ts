@@ -59,7 +59,7 @@ export class FilesComponent implements OnInit {
   }
 
   
-  onFolderUpload(newFolderName : string) {
+  onFolderUpload_old(newFolderName : string) {
     let unique : boolean = this.fileService.isFolderNameTakenInFolder(this.modelToShow as Folder, newFolderName)
     
     if(!unique) {
@@ -82,6 +82,12 @@ export class FilesComponent implements OnInit {
         });
       });
     }
+  }
+
+  onFolderUpload(folderUploadHappened : boolean) {
+    this.fileService.getFileSystemElement(this.modelToShow.relativePath).subscribe(model => {
+      this.modelToShow = model 
+    });
   }
 
 

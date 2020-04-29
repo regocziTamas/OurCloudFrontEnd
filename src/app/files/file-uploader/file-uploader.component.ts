@@ -51,7 +51,6 @@ export class FileUploaderComponent implements OnInit {
         this.filename = null;
         this.filesize = 0;
       }
-      
     })
   }
 }
