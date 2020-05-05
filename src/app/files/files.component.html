@@ -1,14 +1,24 @@
 <mat-card class="upload-card" style="display: flex;">
         <mat-tab-group mat-align-tabs="center" style="min-height: 100%; min-width: 100%;">
             <mat-tab label="Upload File" class="uploadtab" >
-                <app-file-uploader [parentFolder]=modelToShow (uploadFileEvent) = "onFileUpload($event)"></app-file-uploader>
+                <app-file-uploader 
+                [parentFolder]=modelToShow
+                (uploadFileEvent)="onFileUpload($event)"
+                (errorInFileUpload)="onUploadError($event)"></app-file-uploader>
             </mat-tab>
             <mat-tab label="Upload Folder" class="uploadtab" id="kabbe">
-                <app-folder-uploader [parentFolder]=modelToShow (uploadFolderEvent) = "onFolderUpload($event)" ></app-folder-uploader>
+                <app-folder-uploader
+                [parentFolder]=modelToShow
+                (uploadFolderEvent)="onFolderUpload($event)"
+                (errorInFolderUpload)="onUploadError($event)"></app-folder-uploader>
             </mat-tab>
         </mat-tab-group>
 </mat-card>
 
+<div class="error-field" [ngClass]="{'visible-error-field': errorExists}">
+    <mat-error *ngIf="errorExists">{{errorMsg}}</mat-error>
+    <mat-error *ngIf="errorExists" (click)="dismissError()" class="dismiss-link">Dismiss</mat-error>
+</div>
 
 <p>
     <span *ngFor="let b of breadcrumb.crumbs; let i = index" [attr.data-index]="i" (click)="onNavigateBreadcrumb(b.path)" class="bcspan">

@@ -1,8 +1,9 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { FileService } from 'src/app/services/file/file.service';
 import { Folder } from 'src/app/models/folder';
-import { map } from 'rxjs/operators';
-import { HttpEventType } from '@angular/common/http';
+import { map, catchError } from 'rxjs/operators';
+import { HttpEventType, HttpErrorResponse } from '@angular/common/http';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-file-uploader',
@@ -13,6 +14,7 @@ export class FileUploaderComponent implements OnInit {
 
   fileToUpload : File
   @Output() uploadFileEvent = new EventEmitter<boolean>();
+  @Output() errorInFileUpload = new EventEmitter<HttpErrorResponse>();
   @Input() parentFolder : Folder
   filename : string
   filesize : number
@@ -32,25 +34,36 @@ export class FileUploaderComponent implements OnInit {
     this.filesize = this.fileToUpload.size
   }
 
+  resetToInitialState() : void {
+    this.fileUploadInProgress = false;
+    this.fileUploadProgress = 0;
+    this.fileToUpload = null;
+    this.fileSelected = false;
+    this.filename = null;
+    this.filesize = 0;
+  }
+
   uploadFile() {
     this.fileService.sendUploadRequest(this.fileToUpload, this.parentFolder)
-    .pipe(map(event => {
-      if(event.type === HttpEventType.UploadProgress) {
-        this.fileUploadInProgress = true;
-        this.fileUploadProgress = Math.round(100 * event.loaded / event.total);
+    .pipe(
+      map(event => {
+        console.log(event)
+        if(event.type === HttpEventType.UploadProgress) {
+          this.fileUploadInProgress = true;
+          this.fileUploadProgress = Math.round(100 * event.loaded / event.total);
       }
       return event;
     }))
-    .subscribe(event => {
-      if(event.type === HttpEventType.Response) {
-        this.uploadFileEvent.emit(true);
-        this.fileUploadInProgress = false;
-        this.fileUploadProgress = 0;
-        this.fileToUpload = null;
-        this.fileSelected = false;
-        this.filename = null;
-        this.filesize = 0;
-      }
-    })
+    .subscribe(
+      event => {
+        if(event.type === HttpEventType.Response) {
+          this.uploadFileEvent.emit(true);
+          this.resetToInitialState();
+        }
+      },
+      err => {
+        this.errorInFileUpload.emit(err);
+        this.resetToInitialState();
+      })
   }
 }

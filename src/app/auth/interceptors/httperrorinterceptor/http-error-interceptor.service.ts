@@ -16,8 +16,6 @@ export class HttpErrorInterceptor {
             this.authenticationService.logout();
             location.reload(true);
         }
-
-        console.log(err)
         return throwError(err);
     }))
 }

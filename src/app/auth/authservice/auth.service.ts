@@ -22,8 +22,6 @@ export class AuthService {
     return this.http.post<any>(`${environment.serverUrl}/login`, { 'username': username, 'password' : password }, { observe: 'response' })
         .pipe(
           map(res => {
-            console.log(res)
-            console.log(res.headers.get('Authorization'))
             this.token = res.headers.get('Authorization')
             this.isLoggedIn = true
             this.username = username;

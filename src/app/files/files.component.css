@@ -16,3 +16,21 @@
     cursor: pointer;
     color: rgb(124, 124, 124);
 }
+
+.visible-error-field {
+    padding-top: 1%;
+    padding-left: 1%;
+    padding-bottom: 1%;
+    border-radius: 2px;
+    border-width: 2px;
+    border-style: solid;
+    border-color: red;
+    background-color: rgb(255, 197, 197);
+    margin-bottom: 1%;
+}
+
+.dismiss-link {
+    text-decoration: underline;
+    cursor: pointer;
+    display: inline;
+}

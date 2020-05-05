@@ -19,3 +19,11 @@ table {
 .elementmenuicon {
     padding-bottom: 5px;
 }
+
+.type-column {
+    width: 7%;
+}
+
+.type-icon {
+    padding-top: 10%;
+}

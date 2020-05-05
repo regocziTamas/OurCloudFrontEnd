@@ -7,54 +7,46 @@
 
 <table mat-table [dataSource]="model.containedFiles" class="mat-elevation-z8">
 
-    <!--- Note that these columns can be defined in any order.
-          The actual rendered columns are set as a property on the row definition" -->
+  <ng-container matColumnDef="type">
+    <th mat-header-cell *matHeaderCellDef class="type-column"> </th>
+    <td mat-cell *matCellDef="let file">
+        <span><mat-icon class="type-icon">{{file.isFolder ? 'folder_open' : 'description'}}</mat-icon></span>
+    </td>
+  </ng-container>
   
-    <ng-container matColumnDef="filename">
-      <th mat-header-cell *matHeaderCellDef> Filename </th>
+  <ng-container matColumnDef="filename">
+    <th mat-header-cell *matHeaderCellDef> Filename </th>
+    <td mat-cell *matCellDef="let file">
+        <span *ngIf="file.isFolder" (click)="signalModelChange(file.relativePath, file.isFolder)" class="filename">{{file.originalName}}</span>
+        <span *ngIf="!file.isFolder" (click)="fireDownloadFileEvent(file)" class="filename">{{file.originalName}}</span>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="owner">
+    <th mat-header-cell *matHeaderCellDef> Owner </th>
+    <td mat-cell *matCellDef="let file"> {{file.ownerId}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="size">
+    <th mat-header-cell *matHeaderCellDef> Size </th>
+    <td mat-cell *matCellDef="let file"> {{file.fileSize | filesize}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="checkbox">
+      <th mat-header-cell *matHeaderCellDef> Action </th>
       <td mat-cell *matCellDef="let file">
-          <span (click)="signalModelChange(file.relativePath, file.isFolder)" class="filename">{{file.originalName}}</span>
+
+        <mat-icon class="elementmenu" [matMenuTriggerFor]="menu">more_vert</mat-icon>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="fireDeleteFileEvent(file)">
+            <mat-icon class="elementmenuicon">delete</mat-icon>
+            <span>Delete</span>
+          </button>
+        </mat-menu>
+
       </td>
-    </ng-container>
-  
-    <ng-container matColumnDef="owner">
-      <th mat-header-cell *matHeaderCellDef> Owner </th>
-      <td mat-cell *matCellDef="let file"> {{file.ownerId}} </td>
-    </ng-container>
-  
-    <ng-container matColumnDef="size">
-      <th mat-header-cell *matHeaderCellDef> Size </th>
-      <td mat-cell *matCellDef="let file"> {{file.fileSize | filesize}} </td>
-    </ng-container>
+  </ng-container>
 
-    <ng-container matColumnDef="checkbox">
-        <th mat-header-cell *matHeaderCellDef> Action </th>
-        <td mat-cell *matCellDef="let file">
-
-          <mat-icon class="elementmenu" [matMenuTriggerFor]="menu">more_vert</mat-icon>
-          <mat-menu #menu="matMenu">
-            <button mat-menu-item (click)="fireDeleteFileEvent(file)">
-              <mat-icon class="elementmenuicon">delete</mat-icon>
-              <span>Delete</span>
-            </button>
-            <button mat-menu-item *ngIf="!file.isFolder" (click)="fireDownloadFileEvent(file)">
-              <mat-icon class="elementmenuicon">cloud_download</mat-icon>
-              <span>Download</span>  
-            </button>
-          </mat-menu>
-
-        </td>
-    </ng-container>
-  
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
-
-
-<!---<div *ngIf="isFolder">
-    <div *ngFor="let fse of model.containedFiles">
-        <span> <span (click)="signalModelChange(fse.relativePath, fse.isFolder)">{{fse.getOriginalName}}</span> | {{fse.relativePath}} | {{fse.fileSize}} bytes</span>
-    </div>
-</div> -->
-
-

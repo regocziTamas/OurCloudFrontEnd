@@ -16,7 +16,7 @@ export class FileViewerComponent implements OnInit {
   @Output() deleteFileEvent = new EventEmitter<FileSystemElement>();
 
   isFolder: boolean
-  displayedColumns: string[] = ['filename', 'owner', 'size', 'checkbox'];
+  displayedColumns: string[] = ['type', 'filename', 'owner', 'size', 'checkbox'];
 
   constructor() {
     
@@ -24,7 +24,6 @@ export class FileViewerComponent implements OnInit {
 
   ngOnInit() {
     this.isFolder = this.model instanceof Folder
-    console.log(this.isFolder)
   }
 
   signalModelChange(pathToRequest:string, isFolder: boolean) {

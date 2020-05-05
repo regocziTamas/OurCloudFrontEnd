@@ -5,7 +5,7 @@ import { Folder } from 'src/app/models/folder';
 import { OCFile } from 'src/app/models/file';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { map, filter, switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { ContainedFse } from 'src/app/models/contained-fse';
@@ -25,7 +25,7 @@ export class FileService {
     let params : HttpParams = new HttpParams()
       .append("fileToPathToGet", path);
 
-    return this.http.get<JSON>(environment.serverUrl + "/file", {params})
+    return this.http.get<JSON>(environment.serverUrl + "/file", { params })
     .pipe(map(result => {
       if(result.hasOwnProperty("containedFiles")) {
         return new Folder(result) 
@@ -62,10 +62,8 @@ export class FileService {
     let paramslol : HttpParams = new HttpParams()
       .append("pathToFileToDownload", fileToDownload.relativePath);
     let headerslol : HttpHeaders = new HttpHeaders()
-    .set("Accept", fileToDownload.mimeType);
+      .set("Accept", fileToDownload.mimeType);
    
-    console.log(fileToDownload.mimeType);
-
     return this.http.get(environment.serverUrl + "/download", {headers: headerslol, responseType: 'blob', params: paramslol})
   }
 
@@ -75,7 +73,7 @@ export class FileService {
     formData.append("parentFolderPath", parentFolder.relativePath)
     formData.append("shouldOverrideExistingFile", "true")
 
-    return this.http.post(environment.serverUrl + "/upload/file", formData, {reportProgress: true, observe: 'events'});
+    return this.http.post(environment.serverUrl + "/upload/file", formData, {reportProgress: true, observe: 'events'})
   }
 
   public sendUploadFolderRequest(newFolderName : string, parentFolder : Folder) {
