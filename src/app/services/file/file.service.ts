@@ -71,7 +71,7 @@ export class FileService {
     let formData:FormData = new FormData();  
     formData.append("file", fileToUpload);
     formData.append("parentFolderPath", parentFolder.relativePath)
-    formData.append("shouldOverrideExistingFile", "true")
+    formData.append("shouldOverrideExistingFile", "false")
 
     return this.http.post(environment.serverUrl + "/upload/file", formData, {reportProgress: true, observe: 'events'})
   }
@@ -81,7 +81,7 @@ export class FileService {
     let formData : FormData = new FormData()
     formData.append("parentFolderPath", parentFolder.relativePath)
     formData.append("newFolderName", newFolderName)
-    formData.append("shouldOverrideExistingFile", "true");
+    formData.append("shouldOverrideExistingFile", "false");
 
     return this.http.post(environment.serverUrl + "/upload/folder", formData);
   }
