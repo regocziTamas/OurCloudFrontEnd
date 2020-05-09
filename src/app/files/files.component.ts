@@ -11,6 +11,7 @@ import { DummyFolder } from '../models/dummyfile';
 import { ContainedFse } from '../models/contained-fse';
 import { catchError } from 'rxjs/operators';
 import * as FileSaver from 'file-saver';
+import { AuthService } from '../auth/authservice/auth.service';
 
 
 export interface DialogData {
@@ -33,14 +34,19 @@ export class FilesComponent implements OnInit {
 
   constructor(private http: HttpClient,
     private fileService: FileService,
-    public dialog: MatDialog) {
+    public dialog: MatDialog,
+    public authService : AuthService) {
 
   }
 
   ngOnInit() {
-    this.requestFileSystemElement("Thomaster").subscribe(model => {
+    let loggedInUserName : string = this.authService.username;
+    
+    this.requestFileSystemElement(loggedInUserName).subscribe(model => {
       this.modelToShow = model 
       this.breadcrumb.pushElement(this.modelToShow.relativePath, this.modelToShow.originalName);
+    }, err => {
+      this.showErrorMsg(err)
     });
   }
   
@@ -147,10 +153,12 @@ export class FilesComponent implements OnInit {
 
 
   onDeleteFileEvent(fileToDelete : ContainedFse) {
-    console.log("File to delete " + fileToDelete.originalName);
     this.fileService.sendDeleteRequest(fileToDelete).subscribe(result => {
       this.requestFileSystemElement(this.modelToShow.relativePath).subscribe(model => {
         this.modelToShow = model 
+      },
+      err => {
+        this.showErrorMsg(err);
       });
       return result;
     })
@@ -162,11 +170,7 @@ export class FilesComponent implements OnInit {
 
   showErrorMsg(error : HttpErrorResponse) {
     this.errorExists = true;
-    console.log(error)
     if(error.status >= 400 && error.status < 500) {
-      if(error.status === 413) {
-        this.errorMsg = "The file you are trying to upload is too big, the limit is 50MB!"
-      }
       this.errorMsg = error.error;
     } else {
       this.errorMsg = "There has been an internal error, we are sorry for the inconveniences!";

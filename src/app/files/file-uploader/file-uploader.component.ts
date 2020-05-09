@@ -3,7 +3,7 @@ import { FileService } from 'src/app/services/file/file.service';
 import { Folder } from 'src/app/models/folder';
 import { map, catchError } from 'rxjs/operators';
 import { HttpEventType, HttpErrorResponse } from '@angular/common/http';
-import { of } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-file-uploader',
@@ -44,10 +44,18 @@ export class FileUploaderComponent implements OnInit {
   }
 
   uploadFile() {
+
+    if(this.fileToUpload.size > environment.maxUploadSize) {
+      let fileTooBigError : HttpErrorResponse = new HttpErrorResponse(
+        {error: `The file you are trying to upload is too big, it exceeds our ${environment.maxUploadSizeHumanReadable} limit!`,
+         status: 413});
+      this.errorInFileUpload.emit(fileTooBigError);
+      return;
+    }
+
     this.fileService.sendUploadRequest(this.fileToUpload, this.parentFolder)
     .pipe(
       map(event => {
-        console.log(event)
         if(event.type === HttpEventType.UploadProgress) {
           this.fileUploadInProgress = true;
           this.fileUploadProgress = Math.round(100 * event.loaded / event.total);
