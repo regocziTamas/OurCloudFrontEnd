@@ -3,6 +3,8 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../auth/authservice/auth.service';
 import { first } from 'rxjs/operators';
+import { error } from 'protractor';
+import { of, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -21,9 +23,13 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private authenticationService: AuthService)
   {
-    if (this.authenticationService.isLoggedIn) { 
-      this.router.navigate(['/files']);
-    }
+    authenticationService.attemptAutoLogin().subscribe(
+      success => {
+        this.router.navigate(['/files']);
+      },
+      error => {
+      }
+    )
   }
 
   ngOnInit() {
@@ -50,7 +56,6 @@ export class LoginComponent implements OnInit {
 
     this.loading = true;
     this.authenticationService.login(this.form.username.value, this.form.password.value)
-        .pipe(first())
         .subscribe(
             data => {
                 this.router.navigate(["files"]);
@@ -58,6 +63,8 @@ export class LoginComponent implements OnInit {
             error => {
                 this.loading = false;
             });
+
+    
   }
 
 }
