@@ -6,9 +6,10 @@ import { OCFile } from 'src/app/models/file';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
-import { map, filter, switchMap, catchError } from 'rxjs/operators';
+import { map, filter, switchMap, catchError, flatMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { ContainedFse } from 'src/app/models/contained-fse';
+import { HashService } from '../hash/hash.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,7 @@ export class FileService {
 
   private map: Map<string, string>;
 
-  constructor(private router: Router, private http: HttpClient) { 
+  constructor(private router: Router, private http: HttpClient, private hashService : HashService) { 
     this.fillMapWithTestData();
   }
 
@@ -74,6 +75,42 @@ export class FileService {
     formData.append("shouldOverrideExistingFile", "false")
 
     return this.http.post(environment.serverUrl + "/upload/file", formData, {reportProgress: true, observe: 'events'})
+  }
+
+  public sendUploadRequest_token(fileToUpload : File, parentFolder : Folder) : Promise<Observable<any>>{
+
+    return this.hashService.hashFile(fileToUpload)
+      .then(hash => {
+        
+        let preFlightFormData : FormData = this.createFormDataForPreFlightRequest(fileToUpload, parentFolder, hash)
+
+        return this.http.post(environment.serverUrl + "/upload/preflight/file", preFlightFormData)
+        .pipe(
+          flatMap(
+            res => this.sendActualFileUploadRequest(fileToUpload, res["uploadToken"])
+          )
+        )
+      })
+  }
+
+  private createFormDataForPreFlightRequest(fileToUpload : File, parentFolder : Folder, hash : string) : FormData {
+   
+      let formData:FormData = new FormData();  
+      formData.append("parentFolderPath", parentFolder.relativePath)
+      formData.append("hash", hash)
+      formData.append("originalName", fileToUpload.name)
+      formData.append("size", fileToUpload.size.toString())
+      formData.append("shouldOverrideExistingFile", "false")
+
+      return formData;
+  }
+
+  private sendActualFileUploadRequest(fileToUpload : File, uploadToken : string) : Observable<any>{
+    let actualFormData : FormData = new FormData();
+    actualFormData.append("file", fileToUpload)
+    actualFormData.append("uploadToken", uploadToken)
+
+    return this.http.post(environment.serverUrl + "/upload/file", actualFormData, {reportProgress: true, observe: 'events'})
   }
 
   public sendUploadFolderRequest(newFolderName : string, parentFolder : Folder) {

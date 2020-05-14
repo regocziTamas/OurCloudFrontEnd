@@ -43,6 +43,42 @@ export class FileUploaderComponent implements OnInit {
     this.filesize = 0;
   }
 
+
+  uploadFileWithToken() {
+
+    if(this.fileToUpload.size > environment.maxUploadSize) {
+      let fileTooBigError : HttpErrorResponse = new HttpErrorResponse(
+        {error: `The file you are trying to upload is too big, it exceeds our ${environment.maxUploadSizeHumanReadable} limit!`,
+         status: 413});
+      this.errorInFileUpload.emit(fileTooBigError);
+      this.resetToInitialState();
+      return;
+    }
+
+    this.fileService.sendUploadRequest_token(this.fileToUpload, this.parentFolder).then(obs => {
+      obs
+      .pipe(
+        map(event => {
+          if(event.type === HttpEventType.UploadProgress) {
+            this.fileUploadInProgress = true;
+            this.fileUploadProgress = Math.round(100 * event.loaded / event.total);
+        }
+        return event;
+      }))
+      .subscribe(
+        event => {
+          if(event.type === HttpEventType.Response) {
+            this.uploadFileEvent.emit(true);
+            this.resetToInitialState();
+          }
+        },
+        err => {
+          this.errorInFileUpload.emit(err);
+          this.resetToInitialState();
+        })
+    })
+  }
+
   uploadFile() {
 
     if(this.fileToUpload.size > environment.maxUploadSize) {
