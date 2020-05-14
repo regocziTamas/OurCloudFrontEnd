@@ -57,7 +57,7 @@ export class AuthService {
     if(storedToken){
 
       this.token = storedToken
-      
+
       return this.queryUserDetails().pipe(map(
         result => {
           this.username = result.username
@@ -71,6 +71,7 @@ export class AuthService {
         }
       ))
     }
+    
     return throwError("Cannot autologin")
   }
 
