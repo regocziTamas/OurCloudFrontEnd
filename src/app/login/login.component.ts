@@ -25,7 +25,7 @@ export class LoginComponent implements OnInit {
   {
     authenticationService.attemptAutoLogin().subscribe(
       success => {
-        this.router.navigate(['/files']);
+        this.router.navigate(['/files'], { replaceUrl: true });
       },
       error => {
       }
@@ -58,7 +58,7 @@ export class LoginComponent implements OnInit {
     this.authenticationService.login(this.form.username.value, this.form.password.value)
         .subscribe(
             data => {
-                this.router.navigate(["files"]);
+                this.router.navigate(["files"], { replaceUrl: true });
             },
             error => {
                 this.loading = false;
