@@ -48,6 +48,11 @@ export class FilesComponent implements OnInit {
     }, err => {
       this.showErrorMsg(err)
     });
+
+    //this.requestFileSystemElement("Other").subscribe(
+      //res => console.log(res),
+      //err => this.showErrorMsg(err)
+    //)
   }
   
 
@@ -170,8 +175,15 @@ export class FilesComponent implements OnInit {
 
   showErrorMsg(error : HttpErrorResponse) {
     this.errorExists = true;
+    console.log(error.error)
+    //console.log(JSON.parse(error.message))
     if(error.status >= 400 && error.status < 500) {
-      this.errorMsg = error.error;
+      if(error.error instanceof Blob) {
+        let blobError : Blob = error.error
+        blobError.text().then(text => this.errorMsg = text)
+      } else {
+        this.errorMsg = error.error;
+      }
     } else {
       this.errorMsg = "There has been an internal error, we are sorry for the inconveniences!";
     }
