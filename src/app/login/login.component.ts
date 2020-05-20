@@ -14,18 +14,16 @@ import { of, throwError } from 'rxjs';
 export class LoginComponent implements OnInit {
 
   loginForm: FormGroup;
-  loading = false;
   submitted = false;
   returnUrl: string;
 
   constructor(private formBuilder: FormBuilder,
-    private route: ActivatedRoute,
     private router: Router,
     private authenticationService: AuthService)
   {
     authenticationService.attemptAutoLogin().subscribe(
       success => {
-        this.router.navigate(['/files'], { replaceUrl: true });
+        this.router.navigate(['/files'], { replaceUrl: true , queryParams: {file: authenticationService.username}});
       },
       error => {
       }
@@ -39,10 +37,6 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  ngDoCheck() {
-    
-  }
-
   get form() { 
     return this.loginForm.controls;
   }
@@ -54,14 +48,12 @@ export class LoginComponent implements OnInit {
         return;
     }
 
-    this.loading = true;
     this.authenticationService.login(this.form.username.value, this.form.password.value)
         .subscribe(
             data => {
-                this.router.navigate(["files"], { replaceUrl: true });
+                this.router.navigate(["files"], { replaceUrl: true , queryParams: {file: this.authenticationService.username}});
             },
             error => {
-                this.loading = false;
             });
 
     

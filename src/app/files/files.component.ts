@@ -12,6 +12,9 @@ import { ContainedFse } from '../models/contained-fse';
 import { catchError } from 'rxjs/operators';
 import * as FileSaver from 'file-saver';
 import { AuthService } from '../auth/authservice/auth.service';
+import { Router, ActivatedRoute } from '@angular/router';
+import {Location} from "@angular/common";
+import { pairwise, tap, filter } from 'rxjs/operators';
 
 
 export interface DialogData {
@@ -35,38 +38,37 @@ export class FilesComponent implements OnInit {
   constructor(private http: HttpClient,
     private fileService: FileService,
     public dialog: MatDialog,
-    public authService : AuthService) {
+    public authService : AuthService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private location: Location) {
 
   }
 
   ngOnInit() {
-    let loggedInUserName : string = this.authService.username;
-    
-    this.requestFileSystemElement(loggedInUserName).subscribe(model => {
-      this.modelToShow = model 
-      this.breadcrumb.pushElement(this.modelToShow.relativePath, this.modelToShow.originalName);
-    }, err => {
-      this.showErrorMsg(err)
-    });
-
-    //this.requestFileSystemElement("Other").subscribe(
-      //res => console.log(res),
-      //err => this.showErrorMsg(err)
-    //)
+    this.route.queryParams.subscribe(res => {
+      this.requestFileSystemElement(res.file).subscribe(
+        model => {
+          let previousModel : FileSystemElement = this.modelToShow
+          this.modelToShow = model 
+          if(this.modelToShow.relativePath.length > previousModel.relativePath.length) {
+            this.breadcrumb.pushElement(this.modelToShow.relativePath, this.modelToShow.originalName)
+          } 
+          else {
+            this.breadcrumb.removeElementsUntilAndGetRemovedCount(this.modelToShow.relativePath)
+          }
+        },
+        err => {
+          this.showErrorMsg(err)
+        }
+      )
+    })
   }
   
 
   onModelChange(pathToNewModel: string) {
-    this.requestFileSystemElement(pathToNewModel).subscribe(
-      model => {
-        this.modelToShow = model 
-        this.breadcrumb.pushElement(this.modelToShow.relativePath, this.modelToShow.originalName);
-      },
-      err => {
-        this.showErrorMsg(err)
-      });
+    this.router.navigate(['.'], { relativeTo: this.route, queryParams: {file: pathToNewModel}});
   }
-
 
   onFileUpload(fileUploadHappened : boolean) {
     this.requestFileSystemElement(this.modelToShow.relativePath).subscribe(
@@ -77,6 +79,7 @@ export class FilesComponent implements OnInit {
         this.showErrorMsg(err)
       });
   }
+
 
   onUploadError(errorMsg : HttpErrorResponse) {
     this.showErrorMsg(errorMsg);
@@ -120,14 +123,11 @@ export class FilesComponent implements OnInit {
 
 
   onNavigateBreadcrumb(path: string) {
-    this.requestFileSystemElement(path).subscribe(
-      model => {
-        this.modelToShow = model
-        this.breadcrumb.removeElementsUntil(path);
-      },
-      err => {
-        this.showErrorMsg(err)
-      });
+    let removedElementCount : number = this.breadcrumb.removeElementsUntilAndGetRemovedCount(path);
+
+    for (let index = 0; index < removedElementCount; index++) {
+      this.location.back()
+    }
   }
 
 
@@ -169,14 +169,14 @@ export class FilesComponent implements OnInit {
     })
   }
 
+
   requestFileSystemElement(path : string) : Observable<FileSystemElement> {
     return this.fileService.getFileSystemElement(path);
   }
 
   showErrorMsg(error : HttpErrorResponse) {
     this.errorExists = true;
-    console.log(error.error)
-    //console.log(JSON.parse(error.message))
+
     if(error.status >= 400 && error.status < 500) {
       if(error.error instanceof Blob) {
         let blobError : Blob = error.error
