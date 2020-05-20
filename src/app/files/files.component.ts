@@ -124,10 +124,10 @@ export class FilesComponent implements OnInit {
 
   onNavigateBreadcrumb(path: string) {
     let removedElementCount : number = this.breadcrumb.removeElementsUntilAndGetRemovedCount(path);
-
-    for (let index = 0; index < removedElementCount; index++) {
+    window.history.go(removedElementCount * -1)
+    /* for (let index = 0; index < removedElementCount; index++) {
       this.location.back()
-    }
+    } */
   }
 
 
