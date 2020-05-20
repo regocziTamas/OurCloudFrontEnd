@@ -8,8 +8,11 @@ export class Breadcrumb {
         this.crumbs.push(new BreadcrumbElement(path, name));
     }
 
-    removeElementsUntil(path: string) {
+    removeElementsUntilAndGetRemovedCount(path: string) : number{
+        let previousCount = this.crumbs.length;
         this.crumbs = this.crumbs.filter(e => e.path.length <= path.length)
+
+        return previousCount - this.crumbs.length;
     }
 
 
