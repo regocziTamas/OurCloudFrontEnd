@@ -9,15 +9,21 @@ import { User } from './models/user';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'OurCloudFrontEnd';
+  title = 'OurCloud';
+  loggedInUsername : string;
 
   constructor(
     private router: Router,
     public authenticationService: AuthService) {
+    
+  }
+
+  ngOnInit() {
+    this.authenticationService.getUsernameAsObservable().subscribe(newName => this.loggedInUsername = newName)
   }
 
   logout() {
     this.authenticationService.logout();
     this.router.navigate(['/login']);
-}
+  }
 }

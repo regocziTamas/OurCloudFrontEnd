@@ -12,6 +12,7 @@ export class AuthService {
 
   public isLoggedIn: boolean = false;
   public username = "Thomaster"
+  public usernameAsObservable : BehaviorSubject<string> = new BehaviorSubject(this.username);
   public token: string
   public usedBytes : number
 
@@ -35,6 +36,7 @@ export class AuthService {
                 result => {
                   this.username = result.username
                   this.usedBytes = result.usedBytes
+                  this.usernameAsObservable.next(username)
                 }
               )
             )
@@ -50,10 +52,13 @@ export class AuthService {
     return this.http.get(`${environment.serverUrl}/user/current`);
   }
 
+  getUsernameAsObservable() : BehaviorSubject<string> {
+    return this.usernameAsObservable
+  }
+
   attemptAutoLogin() {
 
     let storedToken = localStorage.getItem('token')
-
     if(storedToken){
 
       this.token = storedToken
@@ -61,6 +66,7 @@ export class AuthService {
       return this.queryUserDetails().pipe(map(
         result => {
           this.username = result.username
+          this.usernameAsObservable.next(result.username)
           this.usedBytes = result.usedBytes
           this.isLoggedIn = true
         },
